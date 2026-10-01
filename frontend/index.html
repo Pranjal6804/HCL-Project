@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="no-referrer">
+  <title>CinePulse &bull; Premium Cinematic AI Movie Discovery</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Ambient Dynamic Lighting Halo (Shifts dynamically with featured movie) -->
+  <div class="ambient-glow" id="ambient-glow"></div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="#" class="brand-logo">
+        <span class="neon-icon">⚡</span>
+        <span class="brand-text">Cine<strong>Pulse</strong></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#hero" class="active">Featured</a>
+        <a href="#discover">AI Discovery</a>
+        <a href="#taste-profile-section" id="nav-taste-link">Taste Profile</a>
+        <a href="#curated-rows">Curated Collections</a>
+        <a href="#recommendations-anchor" id="nav-recs-link">Recommendations</a>
+        <a href="#watchlist-modal" onclick="openWatchlistModal()">Watchlist (<span id="watchlist-count">0</span>)</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <div class="neon-status-pill">
+        <span class="neon-dot"></span>
+        <span id="api-status">Engine Online</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       1. 🎬 CINEMATIC HERO SECTION (Full-Width Animated Slider)
+       ========================================================= -->
+  <section class="cinematic-hero" id="hero">
+    <!-- Sliding Backdrop Layer with Ken-Burns Zoom & Blur -->
+    <div class="hero-backdrop-container" id="hero-backdrop-container">
+      <!-- Background slides injected & controlled dynamically -->
+    </div>
+    
+    <!-- Cinematic Dark Gradient Overlays (Vignette & Bottom Fade) -->
+    <div class="hero-gradient-overlay"></div>
+    <div class="hero-bottom-fade"></div>
+
+    <!-- Hero Content Overlay (Text, Metadata & CTA Actions) -->
+    <div class="hero-content-wrapper">
+      <div class="hero-content-inner">
+        <!-- Live Featured Badge -->
+        <div class="hero-badge-row">
+          <span class="hero-badge">
+            <span class="badge-dot"></span> FEATURED CINEMATIC SELECTION
+          </span>
+          <span class="hero-genre-tag" id="hero-genre-primary">Sci-Fi</span>
+        </div>
+
+        <!-- Animated Title -->
+        <h1 class="hero-title" id="hero-title">
+          Inception
+        </h1>
+
+        <!-- Metadata Row (Rating, Year, Duration, Audio, HD) -->
+        <div class="hero-meta-row" id="hero-meta-row">
+          <span class="rating-badge" id="hero-rating">⭐ 8.8</span>
+          <span class="meta-item" id="hero-year">2010</span>
+          <span class="meta-item age-pill">PG-13</span>
+          <span class="meta-item" id="hero-duration">2h 28m</span>
+          <span class="meta-item tech-pill">4K ULTRA HD</span>
+          <span class="meta-item tech-pill">5.1 SURROUND</span>
+        </div>
+
+        <!-- Description with smooth transition -->
+        <p class="hero-description" id="hero-description">
+          A skilled thief steals corporate secrets through the use of dream-sharing technology. He is given the inverse task of planting an idea into the mind of a C.E.O.
+        </p>
+
+        <!-- Genre Chips -->
+        <div class="hero-tags-row" id="hero-tags-row">
+          <span class="hero-tag">Sci-Fi</span>
+          <span class="hero-tag">Action</span>
+          <span class="hero-tag">Mind-Bending</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="hero-actions-row">
+          <button class="btn-primary-action" id="hero-find-similar-btn" onclick="triggerHeroRecommendation()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            <span>Find Similar Movies</span>
+          </button>
+          
+          <button class="btn-secondary-action" onclick="openTrailerModal()">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <span>Trailer</span>
+          </button>
+
+          <button class="btn-glass-action" id="hero-fav-btn" onclick="toggleHeroWatchlist()">
+            <span id="fav-icon">♡</span>
+            <span id="fav-text">Watchlist</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Slide Navigation Controls & Indicator Bars -->
+      <div class="hero-nav-controls">
+        <button class="hero-arrow-btn prev-btn" onclick="prevHeroSlide()" aria-label="Previous Slide">&lsaquo;</button>
+        <div class="hero-progress-bars" id="hero-indicators">
+          <!-- Dynamically generated progress bars -->
+        </div>
+        <button class="hero-arrow-btn next-btn" onclick="nextHeroSlide()" aria-label="Next Slide">&rsaquo;</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       2. 🔍 AI DISCOVERY SEARCH & RECOMMENDATION SECTION
+       ========================================================= -->
+  <main class="main-container" id="discover">
+    <div class="search-section-header">
+      <div class="section-tag">Hybrid Engine &bull; Cosine KNN &bull; SVD Matrix Factorization</div>
+      <h2 class="section-title">Explore by Cinematic Taste Profile</h2>
+      <p class="section-desc">Search any film title to instantly blend semantic narrative vectors with collaborative crowd preference patterns.</p>
+    </div>
+
+    <!-- 🔘 True Hybrid Recommender Toggle -->
+    <div class="hybrid-toggle-container">
+      <span class="control-label">Recommender Architecture Mode:</span>
+      <div class="segmented-control" id="hybrid-mode-toggle">
+        <button class="segment-btn" data-mode="content" onclick="setHybridMode('content')">
+          <span class="mode-icon">📄</span>
+          <span class="mode-text">Content Similar</span>
+          <span class="mode-badge">TF-IDF &bull; Plot &bull; Themes</span>
+        </button>
+        <button class="segment-btn active" data-mode="hybrid" onclick="setHybridMode('hybrid')">
+          <span class="mode-icon">⚡</span>
+          <span class="mode-text">Hybrid Blend</span>
+          <span class="mode-badge">0.55 Content + 0.45 SVD Crowd</span>
+        </button>
+        <button class="segment-btn" data-mode="crowd" onclick="setHybridMode('crowd')">
+          <span class="mode-icon">👥</span>
+          <span class="mode-text">Viewer Crowd Taste</span>
+          <span class="mode-badge">SVD Collaborative Filter</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mood-Based Recommender Filter Pills -->
+    <div class="mood-selector-container">
+      <span class="control-label">Or Pick a Curated Mood:</span>
+      <div class="mood-pills-row">
+        <button class="mood-pill" data-mood="mind_bending" onclick="selectMood('mind_bending', this)">
+          <span class="mood-emoji">🤯</span>
+          <span class="mood-title">Blow My Mind</span>
+          <span class="mood-desc">Sci-Fi &bull; Mystery &bull; Psychological</span>
+        </button>
+        <button class="mood-pill" data-mood="action" onclick="selectMood('action', this)">
+          <span class="mood-emoji">🍿</span>
+          <span class="mood-title">Popcorn &amp; Action</span>
+          <span class="mood-desc">Fast-paced &bull; Adrenaline</span>
+        </button>
+        <button class="mood-pill" data-mood="emotional" onclick="selectMood('emotional', this)">
+          <span class="mood-emoji">😭</span>
+          <span class="mood-title">Emotional &amp; Deep</span>
+          <span class="mood-desc">Drama &bull; Romance &bull; Philosophy</span>
+        </button>
+        <button class="mood-pill" data-mood="late_night" onclick="selectMood('late_night', this)">
+          <span class="mood-emoji">🌙</span>
+          <span class="mood-title">Late Night Chill</span>
+          <span class="mood-desc">Atmospheric &bull; Noir &bull; Indie</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Search Box with Live Autocomplete -->
+    <div class="search-container">
+      <div class="neon-search-bar">
+        <span class="search-lens">🔍</span>
+        <input 
+          type="text" 
+          id="movie-input" 
+          placeholder="Search any title (e.g. Electric Heart, Toy Story, Inception, Dark Knight, Interstellar)..." 
+          autocomplete="off"
+        />
+        <button id="search-btn" class="neon-action-btn">
+          <span>Get Matches</span>
+          <span class="arrow-glyph">→</span>
+        </button>
+      </div>
+      <ul id="suggestions" class="autocomplete-dropdown hidden"></ul>
+    </div>
+
+    <!-- Quick Inspiration Chips -->
+    <div class="quick-genre-strip">
+      <span class="strip-label">Popular anchors:</span>
+      <button class="neon-chip" onclick="quickSelect('Electric Heart')">⚡ Electric Heart</button>
+      <button class="neon-chip" onclick="quickSelect('Toy Story')">🧸 Toy Story</button>
+      <button class="neon-chip" onclick="quickSelect('Inception')">🌀 Inception</button>
+      <button class="neon-chip" onclick="quickSelect('The Dark Knight')">🦇 The Dark Knight</button>
+      <button class="neon-chip" onclick="quickSelect('Interstellar')">🚀 Interstellar</button>
+      <button class="neon-chip" onclick="quickSelect('The Matrix')">🕶️ The Matrix</button>
+      <button class="neon-chip" onclick="quickSelect('Pulp Fiction')">🔫 Pulp Fiction</button>
+    </div>
+
+    <!-- Live Query Banner -->
+    <div id="query-banner" class="query-glow-banner hidden">
+      <div class="query-thumb-box" id="target-poster-thumb"></div>
+      <div class="query-meta-details">
+        <div class="banner-top-tags">
+          <span class="meta-super">Current Taste Anchor:</span>
+          <span class="mode-indicator-pill" id="current-mode-indicator">Mode: Hybrid Blend</span>
+        </div>
+        <h2 id="target-movie-title" class="target-title">Movie Title</h2>
+        <div id="target-genres-wrap" class="target-genres-pills"></div>
+        <div id="target-director-cast" class="target-director-line"></div>
+      </div>
+    </div>
+
+    <!-- Recommendations Grid -->
+    <section id="results-section" class="results-wrapper hidden">
+      <div class="results-top-bar" id="recommendations-anchor">
+        <div class="results-heading-group">
+          <h3>Handpicked AI Matches</h3>
+          <p id="results-subtitle">Ranked by multi-dimensional textual similarity &amp; collaborative affinity</p>
+        </div>
+        <div class="results-meta-badges">
+          <span class="results-pill-count" id="results-latency-badge">⚡ 0.8ms</span>
+          <span class="results-pill-count" id="results-count">6 matches loaded</span>
+        </div>
+      </div>
+      <div id="movie-grid" class="cards-grid">
+        <!-- Rendered via JavaScript with Explainable AI (XAI) shared tags -->
+      </div>
+    </section>
+
+    <!-- Glowing Loader -->
+    <div id="loader" class="loader-wrapper hidden">
+      <div class="neon-pulsar">
+        <div class="ring-1"></div>
+        <div class="ring-2"></div>
+        <div class="ring-3"></div>
+      </div>
+      <p class="loader-caption" id="loader-text">Synthesizing hybrid vectors &amp; retrieving official artwork...</p>
+    </div>
+
+    <!-- Error Banner -->
+    <div id="error-message" class="neon-error-banner hidden"></div>
+
+    <!-- =========================================================
+         3. ✨ DYNAMIC 5-STAR RATING TASTE PROFILE ROW
+         ========================================================= -->
+    <section id="taste-profile-section" class="curated-row-section hidden">
+      <div class="row-header">
+        <div class="row-title-group">
+          <span class="row-badge">REAL-TIME TASTE VECTOR</span>
+          <h3 class="row-title">✨ Curated Specifically for Your Taste Profile</h3>
+          <p class="row-subtitle">Synthesized dynamically in real-time from your 1-5 star movie ratings</p>
+        </div>
+        <div class="taste-row-actions">
+          <span class="rated-counter-pill" id="rated-counter-pill">3 Movies Rated</span>
+          <button class="clear-ratings-btn" onclick="clearRatings()">Reset Ratings</button>
+        </div>
+      </div>
+      <div class="carousel-container">
+        <button class="carousel-arrow prev" onclick="scrollCarousel('taste-profile-track', -1)" aria-label="Previous">&lsaquo;</button>
+        <div class="carousel-track" id="taste-profile-track">
+          <!-- Populated by JavaScript -->
+        </div>
+        <button class="carousel-arrow next" onclick="scrollCarousel('taste-profile-track', 1)" aria-label="Next">&rsaquo;</button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         4. 🍿 NETFLIX / HBO MAX STYLE HORIZONTAL ROW CAROUSELS
+         ========================================================= -->
+    <section id="curated-rows" class="curated-collections-wrapper">
+      
+      <!-- Row 1: Top Cult Classics -->
+      <div class="curated-row-section">
+        <div class="row-header">
+          <div class="row-title-group">
+            <span class="row-badge gold-badge">TIMELESS REPUTATION</span>
+            <h3 class="row-title">🍿 Top Cult Classics</h3>
+            <p class="row-subtitle">Universal viewer acclaim &bull; Multi-generational cultural footprints</p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow prev" onclick="scrollCarousel('cult-classics-track', -1)" aria-label="Previous">&lsaquo;</button>
+          <div class="carousel-track" id="cult-classics-track">
+            <!-- Dynamically populated from /api/categories -->
+          </div>
+          <button class="carousel-arrow next" onclick="scrollCarousel('cult-classics-track', 1)" aria-label="Next">&rsaquo;</button>
+        </div>
+      </div>
+
+      <!-- Row 2: Mind-Bending Thrillers -->
+      <div class="curated-row-section">
+        <div class="row-header">
+          <div class="row-title-group">
+            <span class="row-badge purple-badge">COGNITIVE COMPLEXITY</span>
+            <h3 class="row-title">🧠 Mind-Bending Thrillers</h3>
+            <p class="row-subtitle">Non-linear narratives, psychological labyrinths, and reality-bending climaxes</p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow prev" onclick="scrollCarousel('mind-bending-track', -1)" aria-label="Previous">&lsaquo;</button>
+          <div class="carousel-track" id="mind-bending-track">
+            <!-- Dynamically populated from /api/categories -->
+          </div>
+          <button class="carousel-arrow next" onclick="scrollCarousel('mind-bending-track', 1)" aria-label="Next">&rsaquo;</button>
+        </div>
+      </div>
+
+      <!-- Row 3: Epic Sci-Fi Adventures -->
+      <div class="curated-row-section">
+        <div class="row-header">
+          <div class="row-title-group">
+            <span class="row-badge cyan-badge">COSMIC FRONTIERS</span>
+            <h3 class="row-title">🚀 Epic Sci-Fi Adventures</h3>
+            <p class="row-subtitle">Space exploration, speculative physics, and existential human journeys</p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow prev" onclick="scrollCarousel('sci-fi-track', -1)" aria-label="Previous">&lsaquo;</button>
+          <div class="carousel-track" id="sci-fi-track">
+            <!-- Dynamically populated from /api/categories -->
+          </div>
+          <button class="carousel-arrow next" onclick="scrollCarousel('sci-fi-track', 1)" aria-label="Next">&rsaquo;</button>
+        </div>
+      </div>
+
+      <!-- Row 4: Family & Animated Legends -->
+      <div class="curated-row-section">
+        <div class="row-header">
+          <div class="row-title-group">
+            <span class="row-badge green-badge">TIMELESS NOSTALGIA</span>
+            <h3 class="row-title">🧸 Family &amp; Animated Legends</h3>
+            <p class="row-subtitle">Groundbreaking computer animation, heartwarming humor, and master storytelling</p>
+          </div>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow prev" onclick="scrollCarousel('animated-track', -1)" aria-label="Previous">&lsaquo;</button>
+          <div class="carousel-track" id="animated-track">
+            <!-- Dynamically populated from /api/categories -->
+          </div>
+          <button class="carousel-arrow next" onclick="scrollCarousel('animated-track', 1)" aria-label="Next">&rsaquo;</button>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- =========================================================
+       5. 💡 INTERACTIVE DETAIL MODAL WITH XAI & 5-STAR RATING
+       ========================================================= -->
+  <div id="movie-modal" class="modal-overlay hidden">
+    <div class="modal-window">
+      <button class="modal-close-x" onclick="closeModal()">&times;</button>
+      <div class="modal-content-grid">
+        <div class="modal-poster-side">
+          <img id="modal-poster" src="" alt="Theatrical Poster" />
+        </div>
+        <div class="modal-info-side">
+          <div class="modal-badge-row">
+            <span id="modal-match-badge" class="modal-neon-match">Match</span>
+            <span id="modal-year-pill" class="meta-item age-pill">2010</span>
+          </div>
+          <h2 id="modal-title">Movie Title</h2>
+          <div id="modal-genres" class="modal-genre-pills"></div>
+          
+          <div id="modal-director-block" class="modal-credits-line">
+            <!-- Rendered via JS -->
+          </div>
+
+          <!-- Dual Match Confidence (Content vs Crowd) -->
+          <div class="modal-score-module">
+            <div class="score-header">
+              <span>Overall Hybrid Match</span>
+              <span id="modal-score-pct" class="score-pct-val">85%</span>
+            </div>
+            <div class="neon-progress-bar">
+              <div id="modal-bar-fill" class="progress-fill"></div>
+            </div>
+            <div class="score-sub-metrics" id="modal-sub-scores">
+              <span id="modal-content-sub">Content: 88%</span>
+              <span id="modal-crowd-sub">Crowd SVD: 82%</span>
+            </div>
+          </div>
+
+          <!-- Explainable AI (XAI) Deep-Dive Card -->
+          <div class="why-recommended-box">
+            <h4>💡 Explainable AI (XAI) &bull; Why Was This Recommended?</h4>
+            <p id="modal-why-text">Shared thematic overlap in Dream Logic, Reality Distortion, and Subconscious.</p>
+            <div class="xai-tags-row" id="modal-xai-tags">
+              <!-- Shared thematic tags -->
+            </div>
+          </div>
+
+          <!-- Interactive 5-Star Rating Widget -->
+          <div class="modal-rating-container">
+            <span class="rating-label">Rate to refine your personal taste profile vector:</span>
+            <div class="star-rating-row">
+              <div class="stars-picker" id="modal-star-picker">
+                <span class="star-btn" data-val="1" onclick="submitModalRating(1)" onmouseenter="highlightStars(1)" onmouseleave="resetStarsHighlight()">★</span>
+                <span class="star-btn" data-val="2" onclick="submitModalRating(2)" onmouseenter="highlightStars(2)" onmouseleave="resetStarsHighlight()">★</span>
+                <span class="star-btn" data-val="3" onclick="submitModalRating(3)" onmouseenter="highlightStars(3)" onmouseleave="resetStarsHighlight()">★</span>
+                <span class="star-btn" data-val="4" onclick="submitModalRating(4)" onmouseenter="highlightStars(4)" onmouseleave="resetStarsHighlight()">★</span>
+                <span class="star-btn" data-val="5" onclick="submitModalRating(5)" onmouseenter="highlightStars(5)" onmouseleave="resetStarsHighlight()">★</span>
+              </div>
+              <span class="star-status-label" id="modal-rating-status">Click a star to rate</span>
+            </div>
+          </div>
+
+          <div class="modal-footer-actions">
+            <button class="btn-primary-action" id="modal-explore-btn">Find Matches For This</button>
+            <button class="btn-glass-action" id="modal-watchlist-btn">Add to Watchlist</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trailer Player Modal -->
+  <div id="trailer-modal" class="modal-overlay hidden">
+    <div class="modal-window trailer-window">
+      <button class="modal-close-x" onclick="closeTrailerModal()">&times;</button>
+      <div class="trailer-container">
+        <iframe id="trailer-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="trailer-footer">
+        <h3 id="trailer-title">Movie Trailer</h3>
+        <p>Official promotional preview &bull; Theatrical Release</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast-notify" class="toast-notify hidden"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer" id="about">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-logo">⚡ CinePulse</span>
+        <p>Premium Cinematic Movie Discovery &bull; Powered by TF-IDF &bull; Cosine KNN &bull; SVD Collaborative Filtering &bull; Explainable AI.</p>
+      </div>
+      <div class="footer-right">
+        <span>&copy; 2026 CinePulse &bull; HCL Machine Learning Studio</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
