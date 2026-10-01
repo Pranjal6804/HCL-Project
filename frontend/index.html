@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="referrer" content="no-referrer">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>CinePulse &bull; Premium Cinematic AI Movie Discovery</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -431,11 +431,16 @@
     <div class="modal-window trailer-window">
       <button class="modal-close-x" onclick="closeTrailerModal()">&times;</button>
       <div class="trailer-container">
-        <iframe id="trailer-iframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <iframe id="trailer-iframe" src="" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       </div>
       <div class="trailer-footer">
-        <h3 id="trailer-title">Movie Trailer</h3>
-        <p>Official promotional preview &bull; Theatrical Release</p>
+        <div class="trailer-footer-info">
+          <h3 id="trailer-title">Movie Trailer</h3>
+          <p>Official promotional preview &bull; Theatrical Release</p>
+        </div>
+        <a id="trailer-direct-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-trailer-yt">
+          <span class="yt-play-icon">▶</span> Watch on YouTube
+        </a>
       </div>
     </div>
   </div>

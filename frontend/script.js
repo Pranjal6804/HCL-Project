@@ -204,13 +204,14 @@ function startHeroTimer() {
 
 function resetHeroTimer() {
   clearInterval(heroSlideTimer);
-  heroSlideTimer = setInterval(nextHeroSlide, 5500);
+  heroSlideTimer = setInterval(nextHeroSlide, 4500);
 }
 
-const heroSection = document.getElementById("hero");
-if (heroSection) {
-  heroSection.addEventListener("mouseenter", () => clearInterval(heroSlideTimer));
-  heroSection.addEventListener("mouseleave", () => startHeroTimer());
+// Pause auto-sliding ONLY when user specifically hovers over the navigation arrow controls
+const heroNavControls = document.querySelector(".hero-nav-controls");
+if (heroNavControls) {
+  heroNavControls.addEventListener("mouseenter", () => clearInterval(heroSlideTimer));
+  heroNavControls.addEventListener("mouseleave", () => startHeroTimer());
 }
 
 function triggerHeroRecommendation() {
@@ -272,7 +273,16 @@ function openTrailerModal() {
   if (!currentMovie || !trailerModal) return;
 
   trailerTitle.textContent = `${currentMovie.title} (${currentMovie.year}) — Official Trailer`;
-  trailerIframe.src = `https://www.youtube.com/embed/${currentMovie.trailerId}?autoplay=1&rel=0`;
+  
+  // Clean embed URL with origin and enablejsapi to satisfy YouTube embed security
+  const origin = window.location.origin;
+  trailerIframe.src = `https://www.youtube.com/embed/${currentMovie.trailerId}?autoplay=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(origin)}`;
+  
+  const directLink = document.getElementById("trailer-direct-link");
+  if (directLink) {
+    directLink.href = `https://www.youtube.com/watch?v=${currentMovie.trailerId}`;
+  }
+  
   trailerModal.classList.remove("hidden");
 }
 

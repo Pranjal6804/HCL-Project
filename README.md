@@ -4,8 +4,47 @@
 [![Flask](https://img.shields.io/badge/Flask-2.3+-black.svg)](https://flask.palletsprojects.com/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.3+-orange.svg)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-HCL--Project-brightgreen.svg)](https://github.com/Pranjal6804/HCL-Project)
 
 An enterprise-grade, cinematic movie recommendation streaming platform featuring a **True Hybrid Recommendation Engine** (TF-IDF Content Matching + SVD Collaborative Crowd Taste), **Explainable AI (XAI)**, mood-driven discovery, dynamic 5-star live taste vectors, and a dark glassmorphic streaming UI.
+
+---
+
+## 📸 Product Screenshots & Visual Tour
+
+### 1. 🎬 Cinematic Hero Section
+Full-width, high-contrast hero backdrop with a smooth **2-second horizontal sliding effect**, live metadata tags, ambient lighting, and instant trailer / watchlist actions.
+
+<p align="center">
+  <img src="docs/screenshots/01_cinematic_hero.png" alt="CinePulse Cinematic Hero Section" width="920"/>
+</p>
+
+---
+
+### 2. 🎛️ Hybrid Architecture Mode & Mood Discovery
+Switch seamlessly between **Content-Similar** (TF-IDF + KNN), **Hybrid Blend** ($0.55 \times \text{Content} + 0.45 \times \text{SVD}$), and **Viewer Crowd Taste** (SVD Collaborative Filtering), or explore curated mood filters (*Blow My Mind*, *Popcorn & Action*, *Emotional & Deep*, *Late Night Chill*).
+
+<p align="center">
+  <img src="docs/screenshots/02_recommender_modes_and_moods.png" alt="Recommender Architecture & Curated Moods" width="920"/>
+</p>
+
+---
+
+### 3. 🎯 Handpicked AI Matches & Thematic Tag Attribution
+Smart recommendation cards displaying exact affinity match scores (e.g., 44.0%, 37.5%), genre badges, and non-zero shared TF-IDF vocabulary tags explaining why each movie was curated.
+
+<p align="center">
+  <img src="docs/screenshots/03_ai_recommendation_cards.png" alt="Handpicked AI Matches & Recommendation Cards" width="920"/>
+</p>
+
+---
+
+### 4. 🍿 Official Theatrical Trailer Player Modal
+Built-in responsive video modal with compliance headers, smooth glass backdrop, and direct YouTube integration for uninterrupted cinematic trailers.
+
+<p align="center">
+  <img src="docs/screenshots/04_cinematic_trailer_player.png" alt="Official Trailer Player Modal" width="920"/>
+</p>
 
 ---
 
@@ -24,8 +63,8 @@ An enterprise-grade, cinematic movie recommendation streaming platform featuring
   - Rates 3+ movies to dynamically build your custom user taste profile in real-time.
 
 ### 🎨 2. Premium Streaming Interface
-- **Cinematic Hero Carousel**: Full-width backdrops with smooth 2-second horizontal sliding animations and ambient glow.
-- **Curated Horizontal Carousels**: Netflix/HBO Max-style scrollable rows ("Top Cult Classics", "Mind-Bending Thrillers", "Epic Sci-Fi Adventures", "Curated Just For You").
+- **Cinematic Hero Carousel**: Full-width backdrops with smooth 2-second horizontal sliding animations, automatic progression, and unblurred high-contrast art.
+- **Curated Horizontal Carousels**: Netflix/HBO Max-style scrollable rows (*Top Cult Classics*, *Mind-Bending Thrillers*, *Epic Sci-Fi Adventures*, *Curated Just For You*).
 - **Mood Discovery Pills**: Filter recommendations by mood (*"Blow My Mind"*, *"Popcorn & Action"*, *"Emotional & Deep"*, *"Late Night Chill"*).
 - **High-Resolution Poster Engine**: Wikipedia master image resolution with internal caching and dark cybernetic SVG fallbacks.
 
@@ -35,6 +74,12 @@ An enterprise-grade, cinematic movie recommendation streaming platform featuring
 
 ```
 HCL-Project/
+├── docs/
+│   └── screenshots/                         # High-resolution UI screenshots
+│       ├── 01_cinematic_hero.png
+│       ├── 02_recommender_modes_and_moods.png
+│       ├── 03_ai_recommendation_cards.png
+│       └── 04_cinematic_trailer_player.png
 ├── app.py                                   # Flask backend & Hybrid AI recommendation API
 ├── train_hcl_model.py                       # ML training pipeline (TF-IDF + KNN + SVD)
 ├── movies_10k.csv                           # 10,000+ movie metadata dataset
@@ -50,7 +95,7 @@ HCL-Project/
 ├── hcl_movie_recommendation_system.ipynb    # ML exploratory data analysis notebook
 ├── Barclays_Bank_Churn_Analysis.ipynb       # Supplementary analytics research
 ├── generate_pdf_report.py                   # Automated senior developer report generator
-└── README.md                                # Project documentation
+└── README.md                                # Project documentation & visual guide
 ```
 
 ---
