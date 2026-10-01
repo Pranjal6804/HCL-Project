@@ -177,7 +177,7 @@ body {
   padding-bottom: 4rem;
 }
 
-/* Sliding Backdrop Container & 2-Second Sliding Track */
+/* Sliding Backdrop Container & Pure 2-Second Sliding Track */
 .hero-backdrop-container {
   position: absolute;
   inset: 0;
@@ -201,33 +201,31 @@ body {
   height: 100%;
   background-size: cover;
   background-position: center center;
-  opacity: 1; /* 2x opacity: full visual presence */
-  filter: contrast(1.06) brightness(0.98); /* Sharp & 100% unblurred */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  transform: scale(1.0);
-  transition: transform 2s cubic-bezier(0.25, 1, 0.35, 1);
+  background-repeat: no-repeat;
+  opacity: 1;
+  filter: none !important; /* Pure original artwork: no filters */
+  image-rendering: auto; /* Maximum original image quality */
+  transform: none; /* No artificial zoom or scale distortion */
   will-change: transform;
 }
 
 .hero-slide-bg.active {
-  transform: scale(1.02);
+  filter: none !important;
+  transform: none;
 }
 
-/* Cinematic Multi-Gradient Overlays (Lighter overlay for 2x poster opacity) */
+/* Subtle Natural Overlays (Ensures text legibility while keeping poster original & clean) */
 .hero-gradient-overlay {
   position: absolute;
   inset: 0;
   z-index: 3;
   background: 
     linear-gradient(90deg, 
-      rgba(4, 7, 14, 0.82) 0%, 
-      rgba(4, 7, 14, 0.60) 35%, 
-      rgba(4, 7, 14, 0.30) 70%, 
-      rgba(4, 7, 14, 0.12) 100%),
-    radial-gradient(circle at 75% 35%, rgba(0, 0, 0, 0.08) 0%, rgba(4, 7, 14, 0.55) 100%);
+      rgba(4, 7, 14, 0.78) 0%, 
+      rgba(4, 7, 14, 0.45) 35%, 
+      rgba(4, 7, 14, 0.10) 70%, 
+      transparent 100%);
   pointer-events: none;
-  transition: opacity 2s ease;
 }
 
 .hero-bottom-fade {
@@ -235,9 +233,9 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 48%;
+  height: 38%;
   z-index: 3;
-  background: linear-gradient(180deg, transparent 0%, rgba(4, 7, 14, 0.5) 50%, var(--bg-main) 100%);
+  background: linear-gradient(180deg, transparent 0%, rgba(4, 7, 14, 0.4) 60%, var(--bg-main) 100%);
   pointer-events: none;
 }
 
