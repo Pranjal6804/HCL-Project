@@ -43,7 +43,7 @@ Smart recommendation cards displaying exact affinity match scores (e.g., 44.0%, 
 Built-in responsive video modal with compliance headers, smooth glass backdrop, and direct YouTube integration for uninterrupted cinematic trailers.
 
 <p align="center">
-  <img src="docs/screenshots/04_cinematic_trailer_player.png" alt="Official Trailer Player Modal" width="920"/>
+  <img src="docs/screenshots/04_official_trailer_matrix.png" alt="Official Trailer Player Modal" width="920"/>
 </p>
 
 ---
