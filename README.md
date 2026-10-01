@@ -79,7 +79,7 @@ HCL-Project/
 │       ├── 01_cinematic_hero.png
 │       ├── 02_recommender_modes_and_moods.png
 │       ├── 03_ai_recommendation_cards.png
-│       └── 04_cinematic_trailer_player.png
+│       └── 04_official_trailer_matrix.png
 ├── app.py                                   # Flask backend & Hybrid AI recommendation API
 ├── train_hcl_model.py                       # ML training pipeline (TF-IDF + KNN + SVD)
 ├── movies_10k.csv                           # 10,000+ movie metadata dataset
