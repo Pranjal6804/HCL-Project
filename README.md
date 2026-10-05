@@ -52,7 +52,7 @@ Built-in responsive video modal with compliance headers, smooth glass backdrop, 
 
 ### 🧠 1. Machine Learning & Hybrid AI
 - **True Hybrid Recommender**:
-  - **Content-Based Similarity**: TF-IDF vectorization with cosine distance matching over 9,464 movies.
+  - **Content-Based Similarity**: TF-IDF vectorization with cosine distance matching over 9,000+ movies.
   - **Collaborative Filtering**: Truncated SVD latent factor embeddings modeling real viewer rating correlations.
   - **Dynamic Blending Toggle**: Easily switch between **Content-Similar**, **Viewer Crowd Taste**, or **50/50 Hybrid Blend**.
 - **Explainable AI (XAI)**:
