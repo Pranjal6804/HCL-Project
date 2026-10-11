@@ -23,6 +23,8 @@
   --radius-md: 10px;
   --radius-sm: 6px;
   --shadow-cinema: 0 20px 45px rgba(0, 0, 0, 0.75);
+  /* Hero poster slider: 1.5x speed (base 2000ms transition -> 1333ms) */
+  --hero-slide-transition: 1.333s;
 }
 
 * {
@@ -36,7 +38,13 @@ html {
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Plus Jakarta Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   background-color: var(--bg-main);
   color: var(--text-pure);
   min-height: 100vh;
@@ -91,7 +99,7 @@ body {
 }
 
 .brand-text {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -116,7 +124,8 @@ body {
   position: relative;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover,
+.nav-links a.active {
   color: var(--text-pure);
   text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
 }
@@ -145,9 +154,18 @@ body {
 }
 
 @keyframes pulseNeon {
-  0% { transform: scale(0.9); box-shadow: 0 0 4px var(--neon-cyan); }
-  50% { transform: scale(1.15); box-shadow: 0 0 14px var(--neon-cyan); }
-  100% { transform: scale(0.9); box-shadow: 0 0 4px var(--neon-cyan); }
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 4px var(--neon-cyan);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 14px var(--neon-cyan);
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 4px var(--neon-cyan);
+  }
 }
 
 /* =========================================================
@@ -163,9 +181,22 @@ body {
   display: flex;
   align-items: flex-end;
   padding-bottom: 4rem;
+  /* Static cinematic backdrop (sliding poster slider removed) */
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 18% 25%,
+      rgba(0, 240, 255, 0.1),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 65% 55% at 82% 70%,
+      rgba(168, 85, 247, 0.14),
+      transparent 62%
+    ),
+    linear-gradient(180deg, #070c17 0%, var(--bg-main) 100%);
 }
 
-/* Sliding Backdrop Container & Pure 2-Second Sliding Track (0% Blur, 0% Effects) */
+/* HD Poster Backdrop Slider (posters sourced from the movie rows below) */
 .hero-backdrop-container {
   position: absolute;
   inset: 0;
@@ -173,17 +204,14 @@ body {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-filter: none !important;
-  -webkit-backdrop-filter: none !important;
 }
 
 .hero-backdrop-track {
   display: flex;
   width: 100%;
   height: 100%;
-  transition: transform 2s cubic-bezier(0.25, 1, 0.35, 1);
+  transition: transform var(--hero-slide-transition)
+    cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -191,32 +219,178 @@ body {
   flex: 0 0 100%;
   width: 100%;
   height: 100%;
+  background-color: var(--bg-main);
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  opacity: 1 !important;
-  filter: none !important; /* Exactly 0% blur, no artificial effects */
-  -webkit-filter: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  image-rendering: auto;
-  transform: none !important;
-  will-change: transform;
 }
 
-.hero-slide-bg.active {
-  filter: none !important;
-  -webkit-filter: none !important;
-  transform: none !important;
-}
-
-/* Overlays completely disabled: 0% blur, pure original background poster */
+/* Cinematic readability overlays (side vignette + top/bottom fade) */
 .hero-gradient-overlay {
-  display: none !important;
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(4, 7, 14, 0.95) 0%,
+      rgba(4, 7, 14, 0.78) 38%,
+      rgba(4, 7, 14, 0.28) 66%,
+      rgba(4, 7, 14, 0.62) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(4, 7, 14, 0.8) 0%,
+      rgba(4, 7, 14, 0) 28%,
+      rgba(4, 7, 14, 0) 62%,
+      rgba(4, 7, 14, 0.9) 100%
+    );
 }
 
 .hero-bottom-fade {
   display: none !important;
+}
+
+/* =========================================================
+   🕯️ CINEMATIC MOUSE SPOTLIGHT (Hero Light Layer)
+   ------------------------------------------------------------
+   The spotlight is a purely additive light layer that sits ON TOP
+   of the poster. The poster image itself is never transformed,
+   scaled, stretched or filtered — it stays pixel-sharp.
+   Only transform + opacity are animated (compositor-only, 60 FPS).
+   ========================================================= */
+
+/* Diameter of the main beam. Written by JS so the beam always
+   covers roughly 25–40% of the hero regardless of viewport size. */
+.cinematic-hero {
+  --spot-size: 520px;
+}
+
+.hero-light-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+  contain: paint; /* isolate the effect from the rest of the page */
+}
+
+/* Every moving part is a centred circle offset by a negative margin,
+   so JS only ever writes a plain `translate3d(x, y, 0)` — no calc(),
+   no layout, no repaint. */
+.hero-spotlight-core,
+.hero-spotlight-halo,
+.hero-spotlight-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  backface-visibility: hidden;
+  opacity: 0; /* stays invisible until the pointer enters the hero */
+}
+
+/* 1) Main beam — soft radial falloff, warm cinematic core.
+      Multi-stop gradient = realistic light, NOT a sharp circle. */
+.hero-spotlight-core {
+  width: var(--spot-size);
+  height: var(--spot-size);
+  margin: calc(var(--spot-size) / -2);
+  background: radial-gradient(
+    circle closest-side,
+    rgba(255, 241, 216, 0.21) 0%,
+    rgba(255, 232, 196, 0.16) 20%,
+    rgba(255, 219, 174, 0.105) 40%,
+    rgba(233, 194, 158, 0.055) 60%,
+    rgba(140, 156, 205, 0.022) 80%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* 2) Secondary glow — a very subtle bloom riding behind the core.
+      Moves at a different rate + depth = parallax on lighting only. */
+.hero-spotlight-halo {
+  width: calc(var(--spot-size) * 1.62);
+  height: calc(var(--spot-size) * 1.62);
+  margin: calc(var(--spot-size) * -0.81);
+  background: radial-gradient(
+    circle closest-side,
+    rgba(255, 226, 186, 0.085) 0%,
+    rgba(255, 216, 172, 0.05) 28%,
+    rgba(255, 205, 165, 0.024) 50%,
+    rgba(150, 162, 214, 0.012) 70%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+/* 3) Ambient shade — stays fully transparent inside the beam, then
+      darkens outward so the area AROUND the spotlight gets subtly
+      darker (flashlight-in-a-dark-room falloff). */
+.hero-spotlight-shade {
+  width: calc(var(--spot-size) * 2);
+  height: calc(var(--spot-size) * 2);
+  margin: calc(var(--spot-size) * -1);
+  background: radial-gradient(
+    circle closest-side,
+    rgba(3, 6, 13, 0) 0%,
+    rgba(3, 6, 13, 0) 34%,
+    rgba(3, 6, 13, 0.05) 48%,
+    rgba(3, 6, 13, 0.115) 62%,
+    rgba(3, 6, 13, 0.185) 78%,
+    rgba(3, 6, 13, 0.25) 100%
+  );
+}
+
+/* Layers are only promoted to their own GPU texture while the
+   animation is actually running (idle frames cost nothing). */
+.hero-light-layer.is-running .hero-spotlight-core,
+.hero-light-layer.is-running .hero-spotlight-halo,
+.hero-light-layer.is-running .hero-spotlight-shade {
+  will-change: transform, opacity;
+}
+
+/* Static edge vignette — darkens the outer frame of the hero so the
+   title / description / buttons always stay readable. */
+.hero-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 118% 88% at 50% 44%,
+      rgba(0, 0, 0, 0) 42%,
+      rgba(2, 4, 10, 0.3) 72%,
+      rgba(2, 4, 10, 0.66) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(2, 4, 10, 0.5) 0%,
+      rgba(2, 4, 10, 0) 26%
+    );
+}
+
+/* Touch devices & reduced-motion users: no tracking at all, just a
+   gentle cinematic glow parked slightly above centre. */
+.hero-light-layer[data-mode="static"] .hero-spotlight-core,
+.hero-light-layer[data-mode="static"] .hero-spotlight-halo,
+.hero-light-layer[data-mode="static"] .hero-spotlight-shade {
+  left: 54%;
+  top: 44%;
+}
+.hero-light-layer[data-mode="static"] .hero-spotlight-core {
+  transform: translate3d(-50%, -50%, 0);
+  opacity: 0.9;
+}
+.hero-light-layer[data-mode="static"] .hero-spotlight-halo {
+  transform: translate3d(-50%, -50%, 0);
+  opacity: 1;
+}
+.hero-light-layer[data-mode="static"] .hero-spotlight-shade {
+  transform: translate3d(-50%, -50%, 0);
+  opacity: 0.85;
 }
 
 /* Hero Content Area */
@@ -285,15 +459,19 @@ body {
 
 /* Animated Title */
 .hero-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 3.75rem;
   font-weight: 800;
   line-height: 1.08;
   letter-spacing: -2px;
   color: #ffffff;
   margin-bottom: 1.15rem;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.95), 0 2px 8px rgba(0, 0, 0, 0.9);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  text-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.95),
+    0 2px 8px rgba(0, 0, 0, 0.9);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 
 /* Metadata Row */
@@ -529,7 +707,7 @@ body {
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: -1px;
@@ -559,13 +737,17 @@ body {
   border: 1.5px solid rgba(0, 240, 255, 0.25);
   border-radius: var(--radius-lg);
   padding: 0.45rem 0.5rem 0.45rem 1.35rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 240, 255, 0.15);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.5),
+    0 0 25px rgba(0, 240, 255, 0.15);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .neon-search-bar:focus-within {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 30px rgba(0, 240, 255, 0.4), 0 0 50px rgba(168, 85, 247, 0.25);
+  box-shadow:
+    0 0 30px rgba(0, 240, 255, 0.4),
+    0 0 50px rgba(168, 85, 247, 0.25);
   transform: translateY(-2px);
 }
 
@@ -627,13 +809,21 @@ body {
   overflow-y: auto;
   z-index: 60;
   text-align: left;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75), 0 0 25px rgba(0, 240, 255, 0.2);
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.75),
+    0 0 25px rgba(0, 240, 255, 0.2);
   animation: fadeInDown 0.2s ease;
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .autocomplete-dropdown li {
@@ -705,7 +895,9 @@ body {
   display: flex;
   align-items: center;
   gap: 1.75rem;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 240, 255, 0.2);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(0, 240, 255, 0.2);
   animation: fadeIn 0.4s ease;
 }
 
@@ -727,7 +919,7 @@ body {
 }
 
 .target-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 1.75rem;
   font-weight: 700;
   color: #ffffff;
@@ -757,7 +949,7 @@ body {
 }
 
 .results-heading-group h3 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 1.6rem;
   font-weight: 700;
 }
@@ -802,14 +994,22 @@ body {
 }
 
 @keyframes cardFadeIn {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .movie-card:hover {
   transform: translateY(-8px);
   border-color: var(--neon-cyan);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 240, 255, 0.35);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(0, 240, 255, 0.35);
 }
 
 .poster-frame {
@@ -826,13 +1026,17 @@ body {
 }
 
 .poster-frame::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 30%;
-  background: linear-gradient(180deg, transparent 0%, rgba(8, 12, 23, 0.75) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(8, 12, 23, 0.75) 100%
+  );
   pointer-events: none;
 }
 
@@ -974,8 +1178,12 @@ body {
 }
 
 @keyframes pulsarSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loader-caption {
@@ -1005,13 +1213,21 @@ body {
   max-width: 680px;
   width: 100%;
   position: relative;
-  box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85), 0 0 40px rgba(0, 240, 255, 0.25);
+  box-shadow:
+    0 25px 65px rgba(0, 0, 0, 0.85),
+    0 0 40px rgba(0, 240, 255, 0.25);
   animation: modalZoom 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes modalZoom {
-  from { opacity: 0; transform: scale(0.92); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modal-close-x {
@@ -1075,7 +1291,7 @@ body {
 }
 
 .modal-info-side h2 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 1.7rem;
   font-weight: 700;
   margin: 0.65rem 0;
@@ -1227,14 +1443,22 @@ body {
   border-radius: 9999px;
   font-size: 0.9rem;
   font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(0, 240, 255, 0.3);
   z-index: 300;
   animation: slideUpToast 0.3s ease;
 }
 
 @keyframes slideUpToast {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Error */
@@ -1269,7 +1493,7 @@ body {
 }
 
 .footer-logo {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--neon-cyan);
@@ -1283,8 +1507,12 @@ body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* =========================================================
@@ -1357,7 +1585,11 @@ body {
 }
 
 .segment-btn.active {
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(37, 99, 235, 0.28));
+  background: linear-gradient(
+    135deg,
+    rgba(0, 240, 255, 0.18),
+    rgba(37, 99, 235, 0.28)
+  );
   border: 1px solid var(--neon-cyan);
   box-shadow: 0 0 20px rgba(0, 240, 255, 0.35);
 }
@@ -1415,11 +1647,14 @@ body {
   color: var(--text-dim);
 }
 
-.mood-pill:hover, .mood-pill.active {
+.mood-pill:hover,
+.mood-pill.active {
   transform: translateY(-3px);
   border-color: var(--neon-cyan);
   background: rgba(0, 240, 255, 0.12);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 18px rgba(0, 240, 255, 0.25);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(0, 240, 255, 0.25);
 }
 
 .mood-pill.active .mood-title {
@@ -1515,7 +1750,7 @@ body {
 }
 
 .row-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 1.45rem;
   font-weight: 700;
   color: #ffffff;
@@ -1636,7 +1871,9 @@ body {
 .carousel-card:hover {
   transform: translateY(-8px) scale(1.02);
   border-color: var(--neon-cyan);
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 240, 255, 0.4);
+  box-shadow:
+    0 16px 35px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(0, 240, 255, 0.4);
 }
 
 .carousel-card .carousel-poster-box {
@@ -1648,13 +1885,17 @@ body {
 }
 
 .carousel-card .carousel-poster-box::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 35%;
-  background: linear-gradient(180deg, transparent 0%, rgba(8, 12, 23, 0.8) 100%);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(8, 12, 23, 0.8) 100%
+  );
   pointer-events: none;
 }
 
@@ -1804,7 +2045,8 @@ body {
   line-height: 1;
 }
 
-.star-btn.hover, .star-btn.active {
+.star-btn.hover,
+.star-btn.active {
   color: #fbbf24;
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
   transform: scale(1.15);
@@ -1816,12 +2058,30 @@ body {
 }
 
 @media (max-width: 960px) {
-  .hero-title { font-size: 2.75rem; }
-  .navbar { padding: 1rem 1.5rem; }
-  .hero-content-wrapper { padding: 0 1.5rem; }
-  .main-container { padding: 2rem 1.5rem 4rem; }
-  .modal-content-grid { flex-direction: column; align-items: center; text-align: center; }
-  .modal-poster-side { width: 150px; }
-  .modal-genre-pills { justify-content: center; }
-  .nav-links { display: none; }
+  .hero-title {
+    font-size: 2.75rem;
+  }
+  .navbar {
+    padding: 1rem 1.5rem;
+  }
+  .hero-content-wrapper {
+    padding: 0 1.5rem;
+  }
+  .main-container {
+    padding: 2rem 1.5rem 4rem;
+  }
+  .modal-content-grid {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .modal-poster-side {
+    width: 150px;
+  }
+  .modal-genre-pills {
+    justify-content: center;
+  }
+  .nav-links {
+    display: none;
+  }
 }
